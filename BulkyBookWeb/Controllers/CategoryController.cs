@@ -1,5 +1,7 @@
-﻿using BulkyBookWeb.Data;
-using BulkyBookWeb.Models;
+﻿using BulkyBook.Data;
+
+using BulkyBook.Models;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyBookWeb.Controllers
@@ -20,6 +22,12 @@ namespace BulkyBookWeb.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+
+        public IActionResult Create()
+
+        {
+            return View();
+        }
         public IActionResult Create(Category category)
 
         {
@@ -36,10 +44,72 @@ namespace BulkyBookWeb.Controllers
             return View(category);
            
         }
-        public IActionResult Create()
+        [HttpGet]
+        public IActionResult Edit(int? id)
 
-        {            
-            return View();
+        {
+            if (id == null || id == 0)
+            { return NotFound(); }
+            var categoryFromDB = _context.Categories.Find(id);
+            return View(categoryFromDB);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category obj)
+
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("name" , "the display num cant match the name");
+            }
+            if (ModelState.IsValid)
+            {
+                _context.Categories.Update(obj);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
+
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            } 
+            var obj = _context.Categories.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+                
+
+            return View(obj);
+            
+            
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+
+        {
+            var obj = _context.Categories.Find(id);
+            if (obj == null)
+                return NotFound();
+
+                _context.Categories.Remove(obj);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+               
+         
+        }
+       
+    
+
+
     }
 }
