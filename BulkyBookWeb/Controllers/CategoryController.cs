@@ -3,6 +3,7 @@
 using BulkyBook.Models;
 
 using Microsoft.AspNetCore.Mvc;
+using BulkyBook.DataAccess;
 
 namespace BulkyBookWeb.Controllers
 {
@@ -50,8 +51,9 @@ namespace BulkyBookWeb.Controllers
         {
             if (id == null || id == 0)
             { return NotFound(); }
-            var categoryFromDB = _context.Categories.Find(id);
-            return View(categoryFromDB);
+            //var categoryFromDB = _context.Categories.Find(id);
+            var categoryFromDB = _context.Categories.FirstOrDefault(u => u.ID == id);
+                return View(categoryFromDB);
         }
 
         [HttpPost]
